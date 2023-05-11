@@ -12,7 +12,7 @@
 #define PCF8563_SLAVE_WRITE_ADDRESS 0xa2
 #define CONTROL_STATUS1_REG 0x00
 #define CONTROL_STATUS2_REG 0x01
-#define SECONDS_REG 0x02
+#define VL_SECONDS_REG 0x02
 #define MINUTES_REG 0x03
 #define HOURS_REG 0x04
 #define DAYS_REG 0x05
@@ -94,12 +94,18 @@ bool RTCDriver::getTime(uint8_t& hours, uint8_t& minutes, uint8_t& seconds) {
 
     // read from register 02h to 08h in one go is recommended in PCF8563 Rev.11 [8.5]
     // technically can save stack space and a little bit of read time if we just read 3 bytes
-    if (!I2CDriver::readFromRegister(PCF8563_SLAVE_READ_ADDRESS, SECONDS_REG, bcdTime, 3)) {
+    if (!I2CDriver::readFromRegister(PCF8563_SLAVE_READ_ADDRESS, VL_SECONDS_REG, bcdTime, 3)) {
+        return false;
+    }
+
+    // Check if VL bit is set
+    if((bcdTime[0] & 0x80)) {
+        // If VL bit is set then clock integrity is not guaranteed PCF8563 Rev.11 [8.4.1.1]
         return false;
     }
 
     // Convert the BCD values to binary
-    seconds = bcdToBinary(bcdTime[0]);
+    seconds = bcdToBinary(bcdTime[0] & 0x7F); // mask away VL bit from VL_SECONDS_REG
     minutes = bcdToBinary(bcdTime[1]);
     hours = bcdToBinary(bcdTime[2]);
 

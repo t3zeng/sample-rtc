@@ -9,7 +9,7 @@
 
 #define CONTROL_STATUS1_REG 0x00
 #define CONTROL_STATUS2_REG 0x01
-#define SECONDS_REG 0x02
+#define VL_SECONDS_REG 0x02
 #define MINUTES_REG 0x03
 #define HOURS_REG 0x04
 #define DAYS_REG 0x05

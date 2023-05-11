@@ -39,7 +39,8 @@ bool MockPCF8563::readRegisterByte(uint8_t slaveAddress, uint8_t registerAddress
         case CONTROL_STATUS2_REG:
             *data = _controlStatus1;
             break;
-        case SECONDS_REG:
+        case VL_SECONDS_REG:
+            // does not set VL bit, this mock assumes integrity is guaranteed
             *data = _seconds;
             break;
         case MINUTES_REG:
@@ -96,7 +97,7 @@ bool MockPCF8563::writeRegisterByte(uint8_t slaveAddress, uint8_t registerAddres
         case CONTROL_STATUS2_REG:
             _controlStatus2 = data;
             break;
-        case SECONDS_REG:
+        case VL_SECONDS_REG:
             _seconds = data;
             break;
         case MINUTES_REG:
